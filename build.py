@@ -7,6 +7,7 @@ Install with:  pip install markdown pyyaml
 """
 
 import os
+import re
 import json
 import yaml
 import markdown
@@ -28,6 +29,9 @@ MONTHS_ES = {
     9: "sep", 10: "oct", 11: "nov", 12: "dic",
 }
 
+# Regex to match frontmatter: starts and ends with --- on its own line
+FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
+
 
 def parse_post(filepath):
     """
@@ -41,28 +45,28 @@ def parse_post(filepath):
         ---
 
         Markdown content here...
-
-    The --- blocks are called "frontmatter" (YAML metadata).
-    Everything after the second --- is the post body in markdown.
     """
     with open(filepath, "r", encoding="utf-8") as f:
         raw = f.read()
 
-    # Split on the frontmatter delimiters
-    # raw.split("---") gives: ['', 'frontmatter content', 'body content']
-    parts = raw.split("---", 2)
-    if len(parts) < 3:
+    # Strip BOM and normalize line endings (Windows \r\n → \n)
+    raw = raw.lstrip("\ufeff").replace("\r\n", "\n").replace("\r", "\n")
+
+    # Use regex to extract frontmatter — much safer than split("---")
+    match = FRONTMATTER_RE.match(raw)
+    if not match:
         raise ValueError(f"Invalid frontmatter in {filepath}")
 
+    frontmatter_str = match.group(1)
+    body_md = raw[match.end():].strip()
+
     # Parse the YAML frontmatter into a Python dict
-    meta = yaml.safe_load(parts[1])
+    meta = yaml.safe_load(frontmatter_str)
 
     # Convert the markdown body to HTML
-    body_md = parts[2].strip()
     body_html = markdown.markdown(body_md, extensions=['tables', 'fenced_code'])
 
     # Format the date in Spanish (e.g., "12 mar 2026")
-    # The YAML parser gives us a datetime.date object from "2026-03-12"
     date_obj = meta["date"]
     if isinstance(date_obj, str):
         date_obj = datetime.strptime(date_obj, "%Y-%m-%d").date()
@@ -72,7 +76,7 @@ def parse_post(filepath):
     return {
         "title": meta["title"],
         "date": date_display,
-        "date_sort": date_obj.isoformat(),  # keep ISO format for sorting
+        "date_sort": date_obj.isoformat(),
         "excerpt": meta["excerpt"],
         "body": body_html,
     }
@@ -124,7 +128,6 @@ def build_site():
         template = f.read()
 
     # Step 3: Convert posts to JSON and inject into template
-    # json.dumps handles escaping quotes, special characters, etc.
     posts_json = json.dumps(posts, ensure_ascii=False, indent=2)
     html = template.replace("__POSTS_DATA__", posts_json)
 
