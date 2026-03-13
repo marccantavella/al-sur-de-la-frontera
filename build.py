@@ -59,7 +59,7 @@ def parse_post(filepath):
 
     # Convert the markdown body to HTML
     body_md = parts[2].strip()
-    body_html = markdown.markdown(body_md)
+    body_html = markdown.markdown(body_md, extensions=['tables', 'fenced_code'])
 
     # Format the date in Spanish (e.g., "12 mar 2026")
     # The YAML parser gives us a datetime.date object from "2026-03-12"
