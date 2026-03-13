@@ -33,11 +33,11 @@ header {
 }
 
 .site-title {
-  font-family: 'Space Mono', monospace;
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  text-transform: lowercase;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: none;
   text-decoration: none;
   color: var(--black);
 }
@@ -46,23 +46,6 @@ header {
   font-weight: 400;
   color: var(--gray);
 }
-
-nav {
-  display: flex;
-  gap: 1.5rem;
-}
-
-nav a {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.7rem;
-  text-decoration: none;
-  color: var(--gray);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  transition: color 0.15s;
-}
-
-nav a:hover { color: var(--black); }
 
 /* MAIN */
 main {
