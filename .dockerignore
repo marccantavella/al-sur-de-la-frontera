@@ -1,0 +1,30 @@
+# .dockerignore — Files that Docker should NOT include in the build context
+#
+# This works like .gitignore but for Docker. When you run "docker build",
+# Docker sends all files in the directory to the Docker daemon. Excluding
+# unnecessary files makes this faster and prevents secrets from leaking
+# into the image.
+
+# Git metadata
+.git
+.gitignore
+
+# GitHub Actions (not needed inside the container)
+.github
+
+# Output directory (the build happens inside the container)
+output
+
+# Documentation
+README.md
+LICENSE
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+.vscode
+.idea

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Al Sur de la Frontera</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="static/style.css"/>
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <a class="site-title" href="#" onclick="showList()">al sur de la frontera<span>.</span></a>
+      <nav>
+        <a href="#" onclick="showList()">inicio</a>
+        <a href="#">sobre mí</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- POST LIST -->
+    <div class="post-list-view" id="listView">
+      <ul class="post-list" id="postList"></ul>
+    </div>
+
+    <!-- SINGLE POST -->
+    <div class="post-view" id="postView">
+      <button class="back-btn" onclick="showList()">← volver</button>
+      <article>
+        <div class="post-header">
+          <span class="post-date" id="viewDate"></span>
+          <h1 id="viewTitle"></h1>
+        </div>
+        <div class="post-body" id="viewBody"></div>
+      </article>
+    </div>
+
+  </main>
+
+  <footer>
+    <p>al sur de la frontera</p>
+    <p id="footerYear"></p>
+  </footer>
+
+  <script>
+    const posts = __POSTS_DATA__;
+
+    function renderList() {
+      const list = document.getElementById('postList');
+      list.innerHTML = posts.map((p, i) => `
+        <li class="post-item" onclick="showPost(${i})">
+          <div class="post-date">${p.date}</div>
+          <div class="post-content">
+            <h2>${p.title}</h2>
+            <p>${p.excerpt}</p>
+          </div>
+        </li>
+      `).join('');
+    }
+
+    function showPost(i) {
+      const p = posts[i];
+      document.getElementById('viewDate').textContent = p.date;
+      document.getElementById('viewTitle').textContent = p.title;
+      document.getElementById('viewBody').innerHTML = p.body;
+      document.getElementById('listView').classList.add('hidden');
+      document.getElementById('postView').classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function showList() {
+      document.getElementById('listView').classList.remove('hidden');
+      document.getElementById('postView').classList.remove('active');
+      window.scrollTo(0, 0);
+    }
+
+    document.getElementById('footerYear').textContent = new Date().getFullYear();
+    renderList();
+  </script>
+
+</body>
+</html>
